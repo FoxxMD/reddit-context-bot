@@ -53,6 +53,7 @@
     "body-parser": "^1.19.0",
     "cache-manager": "^3.4.4",
     "cache-manager-redis-store": "^2.0.0",
+    "cacheable-lookup": "^6.1.0",
     "command-exists": "^1.2.9",
     "commander": "^8.0.0",
     "comment-json": "^4.1.1",

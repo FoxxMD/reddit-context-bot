@@ -1,6 +1,9 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import dayjs from 'dayjs';
+import http from 'http';
+import https from 'https';
+import CacheableLookup from 'cacheable-lookup';
 import utc from 'dayjs/plugin/utc.js';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import tz from 'dayjs/plugin/timezone';
@@ -9,7 +12,6 @@ import relTime from 'dayjs/plugin/relativeTime.js';
 import sameafter from 'dayjs/plugin/isSameOrAfter.js';
 import samebefore from 'dayjs/plugin/isSameOrBefore.js';
 import weekOfYear from 'dayjs/plugin/weekOfYear.js';
-import {Manager} from "./Subreddit/Manager";
 import {Command, Argument} from 'commander';
 
 import {
@@ -39,6 +41,17 @@ dayjs.extend(samebefore);
 dayjs.extend(tz);
 dayjs.extend(advancedFormat);
 dayjs.extend(weekOfYear);
+
+const cacheable = new CacheableLookup({
+    // cache dns entries for 60 seconds
+    maxTtl: 60,
+    // fallback to node lookup for 10 minutes in the event of a failure for 10 minutes
+    fallbackDuration: 600
+});
+
+// replace node native request agents, globally, so they used cached dns lookup
+cacheable.install(http.globalAgent);
+cacheable.install(https.globalAgent);
 
 const commentReg = parseLinkIdentifier([COMMENT_URL_ID]);
 const submissionReg = parseLinkIdentifier([SUBMISSION_URL_ID]);
